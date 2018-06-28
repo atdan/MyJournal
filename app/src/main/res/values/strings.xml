@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MyJournal</string>
+    <string name="home">Home</string>
+    <string name="about_us">About us</string>
+    <string name="settings">Settings</string>
+    <string name="my_profile">My profile</string>
+    <string name="help">Help</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="title">
+        <item>@drawable/ic_happy__icon</item>
+        <item>@drawable/ic_okay_icon</item>
+        <item>@drawable/ic_crying_smiley</item>
+        <item>@drawable/ic_sick_smiley</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
