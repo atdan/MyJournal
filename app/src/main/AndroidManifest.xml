@@ -15,23 +15,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomepageActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".HomepageActivity"
+            android:label="Notes"
+            android:theme="@style/AppTheme">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Authentication.SignUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".NewNote"
-            android:label="@string/title_activity_new_note"
+            android:label="New Note"
             android:theme="@style/AppTheme"
             >
             <meta-data
