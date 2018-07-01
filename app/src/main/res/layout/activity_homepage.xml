@@ -38,5 +38,6 @@
         app:rippleColor="@color/colorPrimary"
         android:src="@drawable/ic_add_black_24dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="31dp" />
+        android:layout_marginRight="31dp"
+        tools:ignore="RtlHardcoded" />
 </android.support.design.widget.CoordinatorLayout>

@@ -45,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
 
+    FirebaseUser user;
     private static final int REQUEST_CCODE_SIGN_IN = 12;
     GoogleSignInOptions googleSignInOptions;
     String googleUserName;
@@ -82,48 +83,14 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                if (firebaseAuth.getCurrentUser() != null) {
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
                     Intent intent = new Intent(SignUpActivity.this, HomepageActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             }
         };
-        NavigationView navigationView = findViewById(R.id.nav_view);
-//        View headerLayout = navigationView.getHeaderView(0);
-//        TextView userName = headerLayout.findViewById(R.id.sidebarname);
-//        final TextView semail = headerLayout.findViewById(R.id.sidebaremail);
-
-        //TODO: Did not use any of these
-//        signupBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                final String email = emailEditText.getText().toString().trim();
-//                String password = passwordEditText.getText().toString().trim();
-//
-//                if (TextUtils.isEmpty(email)) {
-//                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                if (TextUtils.isEmpty(password)) {
-//                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                if (password.length() < 6) {
-//                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                progressBar.setVisibility(View.VISIBLE);
-//
-//
-//            }
-//        });
-
-
 
         googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -187,8 +154,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
+
         mAuth.addAuthStateListener(authStateListener);
 
 //        Toast.makeText(this, "User is Signed in", Toast.LENGTH_LONG).show();
@@ -198,7 +164,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        signInIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(signInIntent, REQUEST_CCODE_SIGN_IN);
     }
 

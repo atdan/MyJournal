@@ -33,8 +33,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class HomepageActivity extends AppCompatActivity {
 
-    private static final String TAG = "NotesListActivity";
+    private static final String TAG = "HomepageActivity";
     private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
     private RecyclerView notesListRecyclerView;
 
     private DatabaseReference notesDatabase;
@@ -55,6 +56,7 @@ public class HomepageActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+
         if (firebaseAuth.getCurrentUser() != null) {
             notesDatabase = FirebaseDatabase.getInstance().getReference().child("Notes").child(firebaseAuth.getCurrentUser().getUid());
         }
@@ -64,17 +66,17 @@ public class HomepageActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                Intent intent = new Intent(HomepageActivity.this, NewNote.class);
+                Intent intent = new Intent(getApplicationContext(), NewNote.class);
                 startActivity(intent);
             }
         });
 
 
-        if (notesDatabase != null){
+
 
             setupFirebaseAdadapter();
 
-        }
+
 
 
         updateUI();
@@ -101,9 +103,11 @@ public class HomepageActivity extends AppCompatActivity {
                         if (dataSnapshot.hasChild("title") && dataSnapshot.hasChild("timestamp")) {
                             String title = dataSnapshot.child("title").getValue().toString();
                             String time = dataSnapshot.child("timestamp").getValue().toString();
+                            String description = dataSnapshot.child("content").getValue().toString();
 
 //                            viewHolder.setNoteTime(time);
                             viewHolder.setNoteTitle(title);
+                            viewHolder.setTextDesCription(description);
 
                             //GeoTime geoTime = new GeoTime();
                             viewHolder.setNoteTime(GeoTime.getTime(Long.parseLong(time), getApplicationContext()));
@@ -112,7 +116,7 @@ public class HomepageActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
                                     Log.d(TAG, "onClick: Item clicked");
-                                    Intent intent = new Intent(HomepageActivity.this, NewNote.class);
+                                    Intent intent = new Intent(getApplicationContext(), NewNote.class);
                                     intent.putExtra("noteID", noteId);
                                     startActivity(intent);
                                 }
@@ -171,7 +175,7 @@ public class HomepageActivity extends AppCompatActivity {
         } else {
             Intent startIntent = new Intent(HomepageActivity.this, SignUpActivity.class);
             startActivity(startIntent);
-            finish();
+//            finish();
             Log.i(TAG, "updateUI: Auth == null");
         }
     }
@@ -179,16 +183,15 @@ public class HomepageActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        if (notesDatabase != null){
+
             setupFirebaseAdadapter();
 
-        }
     }
 
     private void signOut() {
         // Firebase sign out
         firebaseAuth.signOut();
-        Intent intent = new Intent(HomepageActivity.this, SignUpActivity.class);
+        Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         startActivity(intent);
 
 
