@@ -96,6 +96,24 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:text="OR" />
+
+            <com.google.android.gms.common.SignInButton
+                android:elevation="3dp"
+                android:id="@+id/google_sign_in_btn"
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:padding="8dp"
+                android:layout_height="wrap_content">
+
+            </com.google.android.gms.common.SignInButton>
+
             <Button
                 android:id="@+id/sign_up"
                 android:layout_width="120dp"
