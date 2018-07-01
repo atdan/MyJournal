@@ -1,9 +1,14 @@
 package com.example.android.myjournal.Authentication;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -40,7 +45,10 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
 
-    private static final int REQUEST_CCODE_SIGN_IN = 1;
+    private static final int REQUEST_CCODE_SIGN_IN = 12;
+
+    String googleUserName;
+    String googleUserMail;
 
     private FirebaseAuth.AuthStateListener authStateListener;
     @BindView(R.id.sign_up)
@@ -134,7 +142,15 @@ public class SignUpActivity extends AppCompatActivity {
         googleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                assert connectivityManager != null;
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
+                if (!isConnected) {
+                    Snackbar.make(v, "Please Connect to Internet", Snackbar.LENGTH_LONG).show();
+                } else {
+                    signIn();
+                }
             }
         });
     }
@@ -188,16 +204,25 @@ public class SignUpActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == REQUEST_CCODE_SIGN_IN) {
+        if (requestCode == REQUEST_CCODE_SIGN_IN && resultCode == Activity.RESULT_OK) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+
             if (result.isSuccess()) {
                 //Google signin was successfull, authenticate with firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+
+                if (account != null) {
+                    googleUserName = account.getDisplayName();
+                    googleUserMail = account.getEmail();
+                    firebaseAuthWithGoogle(account);
+                }
             } else {
                 //google signin was unsuccessful
                 Toast.makeText(this, "Google sign in was unsuccessful", Toast.LENGTH_LONG).show();
             }
+
+
         }
     }
 
@@ -220,10 +245,17 @@ public class SignUpActivity extends AppCompatActivity {
                 });
 
     }
+    @Override
+    protected void onPause() {
+        if (mAuth != null)
+            mAuth.removeAuthStateListener(authStateListener);
+        super.onPause();
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mAuth.addAuthStateListener(authStateListener);
         progressBar.setVisibility(View.GONE);
     }
 
