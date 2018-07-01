@@ -46,9 +46,10 @@ public class SignUpActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
 
     private static final int REQUEST_CCODE_SIGN_IN = 12;
-
+    GoogleSignInOptions googleSignInOptions;
     String googleUserName;
     String googleUserMail;
+    SignInButton googleSignInBtn;
 
     private FirebaseAuth.AuthStateListener authStateListener;
     @BindView(R.id.sign_up)
@@ -83,7 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (firebaseAuth.getCurrentUser() != null) {
                     Intent intent = new Intent(SignUpActivity.this, HomepageActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             }
@@ -94,40 +95,41 @@ public class SignUpActivity extends AppCompatActivity {
 //        final TextView semail = headerLayout.findViewById(R.id.sidebaremail);
 
         //TODO: Did not use any of these
-        signupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        signupBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                final String email = emailEditText.getText().toString().trim();
+//                String password = passwordEditText.getText().toString().trim();
+//
+//                if (TextUtils.isEmpty(email)) {
+//                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                if (TextUtils.isEmpty(password)) {
+//                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                if (password.length() < 6) {
+//                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                progressBar.setVisibility(View.VISIBLE);
+//
+//
+//            }
+//        });
 
-                final String email = emailEditText.getText().toString().trim();
-                String password = passwordEditText.getText().toString().trim();
-
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                progressBar.setVisibility(View.VISIBLE);
 
 
-            }
-        });
-
-        SignInButton googleSignInBtn = findViewById(R.id.google_sign_in_btn);
-
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+        googleSignInBtn = findViewById(R.id.google_sign_in_btn);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
@@ -181,11 +183,6 @@ public class SignUpActivity extends AppCompatActivity {
 //        return true;
 //    }
 
-    private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivityForResult(signInIntent, REQUEST_CCODE_SIGN_IN);
-    }
 
     @Override
     public void onStart() {
@@ -197,6 +194,12 @@ public class SignUpActivity extends AppCompatActivity {
 //        Toast.makeText(this, "User is Signed in", Toast.LENGTH_LONG).show();
 //        username.setText(currentUser.getDisplayName());
         //startActivity(new Intent(SignUpActivity.this, HomepageActivity.class));
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(signInIntent, REQUEST_CCODE_SIGN_IN);
     }
 
     @Override
@@ -213,6 +216,7 @@ public class SignUpActivity extends AppCompatActivity {
                 GoogleSignInAccount account = result.getSignInAccount();
 
                 if (account != null) {
+                    Log.d(TAG, "onActivityResult: Signup activity" + account.toString());
                     googleUserName = account.getDisplayName();
                     googleUserMail = account.getEmail();
                     firebaseAuthWithGoogle(account);
@@ -245,6 +249,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
 
     }
+
     @Override
     protected void onPause() {
         if (mAuth != null)
@@ -254,9 +259,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+
         mAuth.addAuthStateListener(authStateListener);
         progressBar.setVisibility(View.GONE);
+        super.onResume();
     }
 
 
