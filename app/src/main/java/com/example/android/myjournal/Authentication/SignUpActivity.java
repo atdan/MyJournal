@@ -74,7 +74,9 @@ public class SignUpActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 if (firebaseAuth.getCurrentUser() != null) {
-                    startActivity(new Intent(SignUpActivity.this, HomepageActivity.class));
+                    Intent intent = new Intent(SignUpActivity.this, HomepageActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }
         };
@@ -83,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
 //        TextView userName = headerLayout.findViewById(R.id.sidebarname);
 //        final TextView semail = headerLayout.findViewById(R.id.sidebaremail);
 
+        //TODO: Did not use any of these
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,9 +126,9 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-                        Toast.makeText(SignUpActivity.this,"Error signing in",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpActivity.this, "Error signing in", Toast.LENGTH_SHORT).show();
                     }
-                }).addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                }).addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
                 .build();
 
         googleSignInBtn.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +167,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivityForResult(signInIntent, REQUEST_CCODE_SIGN_IN);
     }
 
@@ -178,6 +182,7 @@ public class SignUpActivity extends AppCompatActivity {
 //        username.setText(currentUser.getDisplayName());
         //startActivity(new Intent(SignUpActivity.this, HomepageActivity.class));
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -185,16 +190,17 @@ public class SignUpActivity extends AppCompatActivity {
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == REQUEST_CCODE_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()){
+            if (result.isSuccess()) {
                 //Google signin was successfull, authenticate with firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-            }else {
+            } else {
                 //google signin was unsuccessful
-                Toast.makeText(this,"Google sign in was unsuccessful",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Google sign in was unsuccessful", Toast.LENGTH_LONG).show();
             }
         }
     }
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -206,7 +212,7 @@ public class SignUpActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this,"Authentication failed",Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignUpActivity.this, "Authentication failed", Toast.LENGTH_LONG).show();
                         }
 
                         // ...
